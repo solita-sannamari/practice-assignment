@@ -1,19 +1,10 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link
-} from 'react-router-dom'
 
-import Table from '@mui/material/Table'
-import TableBody from '@mui/material/TableBody'
-import TableCell from '@mui/material/TableCell'
-import TableContainer from '@mui/material/TableContainer'
-import TableHead from '@mui/material/TableHead'
-import TableRow from '@mui/material/TableRow'
-import Paper from '@mui/material/Paper'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+
+import TopicTable from './components/TopicTable'
 
 import topicService from './services/topics'
 
@@ -40,29 +31,6 @@ function App() {
         setTopics(topics.concat(returnedTopic))
         setTopic('')
       })
-  }
-
-  const TopicTable = (props) => {
-    const topics = props.topics
-    const topicRows = topics.map((topic) => 
-      <TableRow key={topic.id}>
-        <TableCell>{topic.topic_name}</TableCell>
-      </TableRow>
-    )
-    return (
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>Topic</TableCell>
-              <TableCell>Messages</TableCell>
-              <TableCell>Time of last message</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>{topicRows}</TableBody>
-        </Table>
-    </TableContainer>
-    )
   }
 
  return (
