@@ -26,7 +26,7 @@ function App() {
 
   const addTopic = (event) => {
     event.preventDefault()
-    
+
     if (topic != ''){
       const result = topics.find(({name}) => name === topic)
       if (result && result.name === topic) {
@@ -61,6 +61,18 @@ function App() {
       }, 3000)
   }
 
+  const deleteTopic = (event) => {
+    const id = event.target.id;
+    topicService
+      .del(id)
+      .then(() => {
+        setTopics((topics) => topics.filter((topic) => topic.id !== id));
+      })
+      .catch((error) => {
+        console.error("Error deleting topic:", error);
+      });
+  };
+
  return (
    <div>
       <h1>Discussion forum</h1>
@@ -80,7 +92,7 @@ function App() {
           Add topic
       </Button>
 
-      <TopicTable topics={topics} /> 
+      <TopicTable topics={topics} deleteTopic={deleteTopic} /> 
     </div>
 
   )
