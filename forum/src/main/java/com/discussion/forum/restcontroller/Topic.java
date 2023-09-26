@@ -2,6 +2,8 @@ package com.discussion.forum.restcontroller;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
@@ -11,6 +13,7 @@ import jakarta.persistence.Column;
 
 
 @Entity
+@Table(name="topics")
 public class Topic implements Serializable {
 
     @Id
@@ -20,6 +23,9 @@ public class Topic implements Serializable {
 
     @Column(name="topicname")
     private String name;
+
+    @ManyToOne
+    private User user;
 
     protected Topic() {}
 
@@ -41,6 +47,14 @@ public class Topic implements Serializable {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 
 }
