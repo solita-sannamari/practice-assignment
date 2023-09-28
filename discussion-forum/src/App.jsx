@@ -4,8 +4,10 @@ import './App.css'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Alert from '@mui/material/Alert'
+import Grid from '@mui/material/Grid'
 
 import TopicTable from './components/TopicTable'
+import MessageBoard from './components/MessageBoard'
 
 import topicService from './services/topics'
 
@@ -77,22 +79,32 @@ function App() {
    <div>
       <h1>Discussion forum</h1>
       {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></> }
-      <TextField 
-        id="new-topic" 
-        variant="outlined" 
-        size="small" 
-        value={topic}
-        onChange={(event) => {setTopic(event.target.value)}} 
-      />
-      <Button 
-        type='submit' 
-        variant='contained'
-        onClick={addTopic}
-      >
-          Add topic
-      </Button>
+      <Grid container spacing={1} marginBottom={3} marginTop={2}>
+        <Grid item xs={4} >
+          <TextField 
+            id="new-topic"
+            label='Topic'
+            variant="outlined" 
+            size="small"
+            fullWidth
+            value={topic}
+            onChange={(event) => {setTopic(event.target.value)}} 
+          />
+        </Grid>
+        <Grid item alignItems='stretch' style={{display: 'flex'}}>
+          <Button 
+            type='submit' 
+            variant='contained'
+            onClick={addTopic}
+          >
+              Add topic
+          </Button>
+        </Grid>
+      </Grid>
 
       <TopicTable topics={topics} deleteTopic={deleteTopic} /> 
+
+      <MessageBoard />
     </div>
 
   )
