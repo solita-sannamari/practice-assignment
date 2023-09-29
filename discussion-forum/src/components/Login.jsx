@@ -13,7 +13,7 @@ function Login() {
     event.preventDefault()
 
     axios
-      .post('http://localhost:8080/login2?username=' + username)
+      .post('http://localhost:8080/login?username=' + username)
       .then(response => {
         console.log('user found')
       })
