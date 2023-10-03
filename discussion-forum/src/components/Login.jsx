@@ -1,30 +1,39 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 import axios from 'axios'
 
 import { TextField, Button, Grid, Alert } from '@mui/material'
 
 function Login() {
-  const [username, setUserame] = useState('')
+  const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const [alert, setAlert]  = useState(false)
+
+  const nav = useNavigate()
 
   const handleLogin = (event) => {
     event.preventDefault()
 
-    axios
-      .post('http://localhost:8080/login?username=' + username)
-      .then(response => {
-        console.log('user found')
-      })
-      .catch(() => {
-        setAlert(true)
-        setTimeout(() => {
-          setAlert(false)
-        }, 3000)
-      })
+    var formData = new FormData();
+    formData.append("username", username)
+    formData.append("password", password)
 
-
+    axios({
+      method: 'post',
+      url: 'http://localhost:5173/api/login',
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" }
+    }).then(response => {
+      nav('/topics')
+      console.log('user found')
+    })
+    .catch(() => {
+      setAlert(true)
+      setTimeout(() => {
+        setAlert(false)
+      }, 3000)
+    })
   }
 
   return (
@@ -41,7 +50,7 @@ function Login() {
               type='text'
               size='small'
               value={username}
-              onChange={(event) => setUserame(event.target.value)} 
+              onChange={(event) => setUsername(event.target.value)} 
           />
         </Grid>
         <Grid item xs={12} md={8}>

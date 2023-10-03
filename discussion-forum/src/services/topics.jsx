@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-const baseUrl = 'http://localhost:8080/topics'
+const baseUrl = '/api/topics'
 
 const getAll = () => {
     const request = axios.get(baseUrl)

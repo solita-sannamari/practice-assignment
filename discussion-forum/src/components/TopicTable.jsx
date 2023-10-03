@@ -27,18 +27,20 @@ const TopicTable = (props) => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {topics.map((element) => (
-              <TableRow key={element.id}>
-                <TableCell>
-                    {element.name}
+            {topics.map((topic) => (
+              <TableRow key={topic.id}>
+                <TableCell key={topic.id}>
+                  <Link to={`/topics/${topic.id}`}>
+                    {topic.name}
+                  </Link>
                   </TableCell>
                 <TableCell></TableCell>
                 <TableCell></TableCell>
                 <TableCell>
                   <Button 
                     variant='outlined'
-                    onClick={() => props.deleteTopic({ target: { id: element.id } })}
-                    id={element.id}
+                    onClick={() => props.deleteTopic({ target: { id: topic.id } })}
+                    id={topic.id}
                   >
                       Delete
                   </Button>
