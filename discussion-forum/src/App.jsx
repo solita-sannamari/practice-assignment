@@ -1,6 +1,6 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import Login from "./components/Login"
-import Forum from "./Forum"
+import Forum from "./components/Forum"
 
 function App () {
   return (
