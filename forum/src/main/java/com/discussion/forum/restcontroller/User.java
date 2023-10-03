@@ -24,18 +24,14 @@ public class User implements Serializable {
     @Column(name="password")
     private String password;
 
-    @Column(name="token")
-    private String token;
-
     @Column(name="role")
     private String role;
 
     protected User() {}
 
-    public User(String username, String password, String token, String role) {
+    public User(String username, String password, String role) {
         this.username = username;
         this.password = password;
-        this.token = token;
         this.role = role;
     }
 
@@ -49,10 +45,6 @@ public class User implements Serializable {
 
     public String getPassword() {
         return this.password;
-    }
-
-    public String getToken() {
-        return this.token;
     }
 
     public String getRole() {
@@ -69,10 +61,6 @@ public class User implements Serializable {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 
     public void setRole(String role) {

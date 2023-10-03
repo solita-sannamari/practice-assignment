@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 
 import axios from 'axios'
@@ -11,6 +11,10 @@ function Login() {
   const [alert, setAlert]  = useState(false)
 
   const nav = useNavigate()
+
+  useEffect(() => {
+    localStorage.setItem("Username", JSON.stringify(username))
+  }, [username]);
 
   const handleLogin = (event) => {
     event.preventDefault()

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import './App.css'
+import '../App.css'
 
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
@@ -7,9 +7,9 @@ import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
 
 import TopicTable from './TopicTable'
-import MessageBoard from './MessageBoard'
 
 import topicService from '../services/topics'
+import userService from '../services/users'
 
 function Forum() {
   const [topics, setTopics] = useState([])
@@ -17,12 +17,21 @@ function Forum() {
   const [alert, setAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [alertSeverity, setAlertSeverity] = useState('')
+  const [user, setUser] = useState({})
 
   useEffect(() => {
     topicService
       .getAll()
       .then(initialTopics => {
         setTopics(initialTopics)
+      })
+    
+    const savedUser = localStorage.getItem("Username")
+    const parsedUser = JSON.parse(savedUser)
+    userService
+      .getByUsername(parsedUser)
+      .then(returnedUser => {
+        setUser(returnedUser)
       })
   }, [])
 
@@ -38,7 +47,8 @@ function Forum() {
         setTopic('')
       } else {
         const topicObject = {
-          name: topic
+          name: topic,
+          user: user
         }
         topicService
           .add(topicObject)
@@ -79,6 +89,7 @@ function Forum() {
    <div>
       <h1>Discussion forum</h1>
       {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></> }
+      <p>Logged in as: {user.username}</p>
       <Grid container spacing={1} marginBottom={3} marginTop={2}>
         <Grid item xs={4} >
           <TextField 

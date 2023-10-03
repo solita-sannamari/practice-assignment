@@ -1,6 +1,7 @@
 package com.discussion.forum.restcontroller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -10,12 +11,10 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import com.discussion.forum.restcontroller.LoginDto;
 
 @RestController
 public class UserController {
@@ -26,10 +25,21 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    @GetMapping("/users/id/{id}")
+    Optional<User> findById(@PathVariable int id) {
+        return userRepository.findById(id);
+    }
+
+    @GetMapping("/users/username/{username}")
+    User findByUsername(@PathVariable String username) {
+        return userRepository.findByUsername(username);
+    }
+
     @GetMapping("/users")
     List<User> all() {
         return userRepository.findAll();
     }
+
     @PostMapping("/login")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new 
