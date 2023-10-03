@@ -51,17 +51,17 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()).cors(cors -> cors.disable())
-            //.cors(cors -> cors.addMapping("/**").allowedMethods("*").allowedOrigins("*").allowedHeaders("*"))
-            .authorizeHttpRequests((requests) -> 
+           .csrf(csfr -> csfr.disable())
+           .authorizeHttpRequests((requests) ->
                 requests
                     .requestMatchers("/login").permitAll()
                     .anyRequest().authenticated())
                     .formLogin(s -> s
-                            .loginPage("http://localhost:5173/")
-                            .loginProcessingUrl("/login")
-                            .defaultSuccessUrl("http://localhost:8080/topics")
-                            .permitAll());
+                        .loginPage("http://localhost:5173/login")
+                        .loginProcessingUrl("/login")
+                        .defaultSuccessUrl("http://localhost:5173/api/users", true)
+                        .permitAll()
+                    );
         return http.build();
     }
 }

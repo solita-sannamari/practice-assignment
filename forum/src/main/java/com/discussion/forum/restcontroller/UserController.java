@@ -19,10 +19,17 @@ import com.discussion.forum.restcontroller.LoginDto;
 
 @RestController
 public class UserController {
-
+    
     @Autowired
     private AuthenticationManager authenticationManager;
+    
+    @Autowired
+    UserRepository userRepository;
 
+    @GetMapping("/users")
+    List<User> all() {
+        return userRepository.findAll();
+    }
     @PostMapping("/login")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new 
@@ -40,13 +47,7 @@ public class UserController {
 @RestController
 public class UserController {
 
-    @Autowired
-    UserRepository userRepository;
 
-    @GetMapping("/users")
-    List<User> all() {
-        return userRepository.findAll();
-    }
 
     @PostMapping("/login")
     public ResponseEntity<User> getUsername(@RequestParam String username) {
