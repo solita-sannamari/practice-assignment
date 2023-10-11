@@ -1,53 +1,137 @@
-import { Button, TextField, Grid } from '@mui/material'
-import { useState } from 'react'
+import { Button, 
+        TextField, 
+        Grid, 
+        Dialog, 
+        DialogTitle, 
+        DialogContent, 
+        DialogActions,
+        Alert } from '@mui/material'
+import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+
+import messageService from '../services/messages'
+import topicsService from '../services/topics'
+import userService from '../services/users'
+import Navbar from './Navbar'
 
 const MessageBoard = () => {
+    const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
-    const [messages, setMessages] = useState([
-        {
-            id: 1,
-            content: "Hey fellow cat lovers! 😻 Let's share some heartwarming stories about our feline friends. I'll start: my cat recently brought me a gift in the form of a half-eaten toy mouse. It was hilarious and adorable at the same time. What's the most endearing or funny thing your cat has done lately? Share your stories and bring some smiles to our day!",
-            user: 'user1'
-        },
-        {
-            id: 2,
-            content: "Hi there, cat enthusiasts! 🐱 I couldn't resist sharing this charming moment from last night. My cat, Mittens, decided to curl up right on top of my laptop keyboard as I was working. She made herself comfortable and even pressed the Enter key a few times, sending some interesting messages to my colleagues! 😹 What mischievous or cute antics have your cats pulled recently? Let's swap these heartwarming tales!",
-            user: 'user2'
-        },
-        {
-            id: 3,
-            content: "Hello, fellow cat aficionados! 🐾 I had quite the laugh yesterday when my cat, Whiskers, tried to pounce on a feather from a bird video on TV. It was like she thought it was a real bird! Her determination was so adorable. Do you have any similar stories of your cats getting captivated by the TV or reacting to something unexpected? Share your delightful anecdotes here! 😸",
-            user: 'user3'
-        },
-        {
-            id: 4,
-            content: "Hey cat enthusiasts! 🐾 I just witnessed a heartwarming moment that melted my heart. My senior cat, Mr. Whiskers, has taken it upon himself to be the protector of our new kitten, Luna. He watches over her while she eats, plays, and even grooms her when she allows it. It's the sweetest display of feline companionship I've ever seen. Have your cats formed unexpected bonds or acted as protectors to their fellow feline or non-feline friends? Share your touching stories, and let's celebrate the love and camaraderie our cats bring into our lives! 😺❤️",
-            user: 'user4'
-        },
-    ])
+    const [topic, setTopic] = useState({})
+    const [user, setUser] = useState({})
+    const [alert, setAlert] = useState(false)
+    const [alertMessage, setAlertMessage] = useState('')
+    const [open, setOpen] = useState(false)
+    const [editMsgObj, setEditMsgObj] = useState({})
+    const [editedMessage, setEditedMessage] = useState('')
+
+    const { id } = useParams()
+
+    useEffect(() => {
+        messageService
+            .getAll(id)
+            .then(initialMessages => {
+                setMessages(initialMessages)
+            })
+        topicsService
+            .getById(id)
+            .then(topic => {
+                setTopic(topic)
+            })
+            
+        const savedUser = localStorage.getItem("Username")
+        const parsedUser = JSON.parse(savedUser)
+        userService
+            .getByUsername(parsedUser)
+            .then(returnedUser => {
+                setUser(returnedUser)
+              })
+    }, [])
+
+    useEffect(() => {
+        setEditedMessage(editMsgObj.message)
+    }, [editMsgObj])
 
     const addMessage = (event) => {
         event.preventDefault()
-        const id = messages.length + 1
-        const user = `user${id}`
 
-        const newMessage = {
-            id: id,
-            content: message,
-            user: user
+        if (message != '') {
+            const dateString = new Date().toISOString()
+    
+            const newMessage = {
+                message: message,
+                user: user,
+                timestamp: dateString,
+                topic: topic
+            }
+            messageService
+                .add(newMessage, id)
+                .then(returnedMessages => {
+                    setMessages(messages.concat(returnedMessages))
+                    setMessage('')
+                })
+        } else {
+            setAlert(true)
+            setAlertMessage('Message is empty.')
+
+            setTimeout(() => {
+                setAlertMessage('')
+                setAlert(false)
+              }, 3000)
         }
-        setMessages(messages.concat(newMessage))
-        setMessage('')
+    }
+
+    const editMessage = (event) => {
+        event.preventDefault()
+        
+        const editedMsgObj = {...editMsgObj, message: editedMessage}
+        const topic_id = editedMsgObj.topic.id
+        const msg_id = editedMsgObj.id
+        messageService
+            .edit(editedMsgObj, topic_id, msg_id)
+            .then(returnedMessage => {
+                setMessages(messages.map(message => message.id != msg_id ? message : returnedMessage))
+            })
+        
+        setOpen(false)
+       
+    }
+
+    const handleClickOpen = (event) => {
+        setEditMsgObj(messages.find((message) => message.id == event.target.id))
+        setOpen(true)
+    }
+
+    const handleClose = () => {
+        console.log('close dialog')
+        setOpen(false)
+        
     }
 
     return(
         <div>
-            <h1>Adorable cat stories 🐱</h1>
-            <Grid container spacing={2} marginBottom={2}>
-            {messages.map(message => (
-                <Grid item key={message.id}>{message.content}
-                </Grid>
-                ))}
+            <Navbar />
+            <p>Logged in as: {user.username}</p>
+            <h1>{topic.name}</h1>
+            <Grid container marginBottom={2} direction='column' alignItems='flex-start'>
+                {messages.length === 0 ? (
+                    <Grid item>No messages.</Grid>
+                ) : ( 
+                    messages.map((message, index) => (
+                        <div key={message.id}>
+                            <Grid item marginBottom={2}>Posted by: {message.user.username}, {message.timestamp[2]}.{message.timestamp[1]}.{message.timestamp[0]} at {message.timestamp[3]}:{message.timestamp[4]} </Grid>
+                            <Grid item marginBottom={2}>{message.message}</Grid>
+                            <Grid item marginBottom={2}>
+                            {message.user.username === user.username ? (
+                                <Button id={message.id} variant='contained' onClick={handleClickOpen}>Edit</Button>
+                                ) : null}
+                            </Grid>
+                            {index !== messages.length - 1 && (
+                                <div style= {{borderBottom: '1px solid #e0e0e0'}}></div>
+                            )}
+                        </div>
+                    ))
+                )}
             </Grid>
 
             <Grid container alignItems='center' spacing={1}>
@@ -71,6 +155,25 @@ const MessageBoard = () => {
                     </Button>
                 </Grid>
             </Grid>
+            {alert ? <Alert severity='error'>{alertMessage}</Alert> : <></>}
+
+            <Dialog open={open} onClose={handleClose}>
+                <DialogTitle>Edit message</DialogTitle>
+                <DialogContent>
+                    <TextField
+                        autoFocus
+                        id='message'
+                        type='text'
+                        value={editedMessage}
+                        onChange={(e) => setEditedMessage(e.target.value)}
+                        style={{width: 500}}
+                        multiline
+                    />
+                </DialogContent>
+                <DialogActions>
+                    <Button variant='contained' onClick={editMessage}>Send</Button>
+                </DialogActions>
+            </Dialog>
         </div>
     )
 }

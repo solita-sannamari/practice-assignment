@@ -7,6 +7,11 @@ const getAll = () => {
     return request.then(response => response.data)
 }
 
+const getById =(id) => {
+    const request = axios.get(`${baseUrl}/${id}`)
+    return request.then(response => response.data)
+}
+
 const add = newObject => {
     const request = axios.post(baseUrl, newObject)
     return request.then(response => response.data)
@@ -17,4 +22,4 @@ const del = (id) => {
     return request.then(response => response.data)
 }
 
-export default { getAll, add, del }
+export default { getAll, getById, add, del }

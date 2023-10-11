@@ -1,6 +1,7 @@
 package com.discussion.forum.restcontroller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,11 @@ public class TopicController {
     @GetMapping("/topics")
     List<Topic> all() {
         return topicRepository.findAll();
+    }
+
+    @GetMapping("/topics/{id}")
+    Optional<Topic> getById(@PathVariable int id) {
+        return topicRepository.findById(id);
     }
 
     @ResponseStatus(HttpStatus.CREATED)

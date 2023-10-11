@@ -4,6 +4,8 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +24,7 @@ public class Message implements Serializable {
     @Column(name="id")
     private int id;
    
-    @Column(name="message")
+    @Column(name="message", columnDefinition="TEXT")
     private String message;
 
     @CreationTimestamp
@@ -58,7 +60,7 @@ public class Message implements Serializable {
         this.id = id;
     }
 
-    public void setmessage(String message) {
+    public void setMessage(String message) {
         this.message = message;
     }
 
@@ -74,7 +76,7 @@ public class Message implements Serializable {
         this.user = user;
     }
 
-    public Topic geTopic() {
+    public Topic getTopic() {
         return topic;
     }
 

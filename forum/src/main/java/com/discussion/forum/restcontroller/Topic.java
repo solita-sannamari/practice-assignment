@@ -1,13 +1,16 @@
 package com.discussion.forum.restcontroller;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 
 import java.io.Serializable;
+import java.util.List;
 
 import jakarta.persistence.Column;
 
@@ -26,6 +29,9 @@ public class Topic implements Serializable {
 
     @ManyToOne
     private User user;
+
+    @OneToMany(mappedBy = "topic", orphanRemoval = true)
+    private List<Message> messages;
 
     protected Topic() {}
 

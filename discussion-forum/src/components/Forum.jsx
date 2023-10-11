@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
 import '../App.css'
 
 import Button from '@mui/material/Button'
@@ -7,6 +8,7 @@ import Alert from '@mui/material/Alert'
 import Grid from '@mui/material/Grid'
 
 import TopicTable from './TopicTable'
+import Navbar from './Navbar'
 
 import topicService from '../services/topics'
 import userService from '../services/users'
@@ -19,20 +21,26 @@ function Forum() {
   const [alertSeverity, setAlertSeverity] = useState('')
   const [user, setUser] = useState({})
 
+  const nav = useNavigate()
+
   useEffect(() => {
-    topicService
-      .getAll()
-      .then(initialTopics => {
-        setTopics(initialTopics)
-      })
     
     const savedUser = localStorage.getItem("Username")
     const parsedUser = JSON.parse(savedUser)
-    userService
-      .getByUsername(parsedUser)
-      .then(returnedUser => {
-        setUser(returnedUser)
-      })
+    if (parsedUser == '') {
+      nav('/login')
+    } else {
+      topicService
+        .getAll()
+        .then(initialTopics => {
+          setTopics(initialTopics)
+        })
+      userService
+        .getByUsername(parsedUser)
+        .then(returnedUser => {
+          setUser(returnedUser)
+        })
+    }
   }, [])
 
   const addTopic = (event) => {
@@ -87,34 +95,33 @@ function Forum() {
 
  return (
    <div>
-      <h1>Discussion forum</h1>
-      {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></> }
-      <p>Logged in as: {user.username}</p>
-      <Grid container spacing={1} marginBottom={3} marginTop={2}>
-        <Grid item xs={4} >
-          <TextField 
-            id="new-topic"
-            label='Topic'
-            variant="outlined" 
-            size="small"
-            fullWidth
-            value={topic}
-            onChange={(event) => {setTopic(event.target.value)}} 
-          />
-        </Grid>
-        <Grid item alignItems='stretch' style={{display: 'flex'}}>
-          <Button 
-            type='submit' 
-            variant='contained'
-            onClick={addTopic}
-          >
-              Add topic
-          </Button>
-        </Grid>
-      </Grid>
+    <Navbar />
+     <p>Logged in as: {user.username}</p>
+     {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
+     <Grid container spacing={1} marginBottom={3} marginTop={2}>
+       <Grid item xs={4}>
+         <TextField
+           id="new-topic"
+           label='Topic'
+           variant="outlined"
+           size="small"
+           fullWidth
+           value={topic}
+           onChange={(event) => { setTopic(event.target.value) } } />
+       </Grid>
+       <Grid item alignItems='stretch' style={{ display: 'flex' }}>
+         <Button
+           type='submit'
+           variant='contained'
+           onClick={addTopic}
+         >
+           Add topic
+         </Button>
+       </Grid>
+     </Grid>
 
-      <TopicTable topics={topics} deleteTopic={deleteTopic} /> 
-    </div>
+     <TopicTable topics={topics} deleteTopic={deleteTopic} />
+   </div>
 
   )
 }

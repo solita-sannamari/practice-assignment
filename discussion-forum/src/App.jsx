@@ -8,7 +8,7 @@ function App () {
     <Router>
       <Routes>
         <Route path='/login' element={<Login />} />
-        <Route path='/topics/:id' element={<MessageBoard />} />
+        <Route path='/topics/:id/messages' element={<MessageBoard />} />
         <Route path='/topics' element={<Forum />} />
       </Routes>
     </Router>

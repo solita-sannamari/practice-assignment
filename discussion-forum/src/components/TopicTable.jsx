@@ -30,7 +30,7 @@ const TopicTable = (props) => {
             {topics.map((topic) => (
               <TableRow key={topic.id}>
                 <TableCell key={topic.id}>
-                  <Link to={`/topics/${topic.id}`}>
+                  <Link to={`/topics/${topic.id}/messages`}>
                     {topic.name}
                   </Link>
                   </TableCell>
