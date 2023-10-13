@@ -17,4 +17,9 @@ const edit = (newObject, topicId, messageId) => {
     return request.then(response => response.data)
 }
 
-export default { getAll, add, edit }
+const getCount = (topicId) => {
+    const request = axios.get(`${baseUrl}/${topicId}/count`)
+    return request.then(response => response.data)
+}
+
+export default { getAll, add, edit, getCount }

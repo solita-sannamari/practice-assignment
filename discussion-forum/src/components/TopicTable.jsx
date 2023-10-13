@@ -10,7 +10,8 @@ import TableContainer from '@mui/material/TableContainer'
 import TableHead from '@mui/material/TableHead'
 import TableRow from '@mui/material/TableRow'
 import Paper from '@mui/material/Paper'
-import Button from '@mui/material/Button'
+
+import TopicRow from './TopicRow'
 
 const TopicTable = (props) => {
     const topics = props.topics
@@ -28,24 +29,7 @@ const TopicTable = (props) => {
           </TableHead>
           <TableBody>
             {topics.map((topic) => (
-              <TableRow key={topic.id}>
-                <TableCell key={topic.id}>
-                  <Link to={`/topics/${topic.id}/messages`}>
-                    {topic.name}
-                  </Link>
-                  </TableCell>
-                <TableCell></TableCell>
-                <TableCell></TableCell>
-                <TableCell>
-                  <Button 
-                    variant='outlined'
-                    onClick={() => props.deleteTopic({ target: { id: topic.id } })}
-                    id={topic.id}
-                  >
-                      Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
+              <TopicRow key={topic.id} topic={topic} deleteTopic={props.deleteTopic}></TopicRow>
             ))}
           </TableBody>
         </Table>
