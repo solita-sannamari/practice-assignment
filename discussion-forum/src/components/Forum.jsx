@@ -12,6 +12,7 @@ import Navbar from './Navbar'
 
 import topicService from '../services/topics'
 import userService from '../services/users'
+import { Dialog, DialogContent, DialogTitle } from '@mui/material'
 
 function Forum() {
   const [topics, setTopics] = useState([])
@@ -20,6 +21,9 @@ function Forum() {
   const [alertMessage, setAlertMessage] = useState('')
   const [alertSeverity, setAlertSeverity] = useState('')
   const [user, setUser] = useState({})
+  const [editedTopicName, setEditedTopicName] = useState('')
+  const [open, setOpen] = useState(false)
+  const [editTopicObj, setEditTopicObj] = useState({}) 
 
   const nav = useNavigate()
 
@@ -43,6 +47,12 @@ function Forum() {
     }
   }, [])
 
+  useEffect(() => {
+    if (editTopicObj.topic != undefined) {
+      setEditedTopicName(editTopicObj.topic.name)
+    }
+  }, [editTopicObj])
+
   const addTopic = (event) => {
     event.preventDefault()
 
@@ -54,7 +64,6 @@ function Forum() {
         setAlertSeverity('error')
         setTopicName('')
       } else {
-        console.log(topicName)
         const topicObject = {
             name: topicName,
             user: user
@@ -62,7 +71,6 @@ function Forum() {
         topicService
           .add(topicObject)
           .then(returnedTopic => {
-            console.log(returnedTopic)
             const newTopicStatisticsObject = {
               latestMsgTime: null,
               msgCount: 0,
@@ -96,12 +104,44 @@ function Forum() {
         setTopics((topics) => topics.filter((t) => t.topic.id !== id));
       })
       .catch((error) => {
-        console.error("Error deleting topic:", error);
-      });
-  };
+        console.error("Error deleting topic:", error)
+      })
+  }
+
+  const editTopic = (event) => {
+    event.preventDefault()
+
+    const editedTopicObj = {...editTopicObj.topic, name: editedTopicName}
+    const id = editedTopicObj.id
+    console.log(editedTopicObj)
+
+    console.log('edit topic clicked')
+
+    topicService
+      .edit(editedTopicObj, id)
+      .then(returnedTopic => {
+        console.log(returnedTopic)
+        const returnedTopicStatistic = {
+          latestMsgTime: null,
+          msgCount: 0,
+          topic: returnedTopic
+        }
+        setTopics(topics.map((t) => t.topic.id != id ? t : returnedTopicStatistic))
+      })
+    setOpen(false)
+  }
+  
+  const handleClickOpen = (event) => {
+    setOpen(true)
+    setEditTopicObj(topics.find((t) => t.topic.id == event.target.id))
+  }
+
+  const handleClose = () => {
+    setOpen(false)
+  }
 
  return (
-   <div>
+  <div>
     <Navbar />
      <p>Logged in as: {user.username}</p>
      {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
@@ -127,8 +167,21 @@ function Forum() {
        </Grid>
      </Grid>
 
-     <TopicTable topics={topics} deleteTopic={deleteTopic} />
-   </div>
+     <TopicTable topics={topics} deleteTopic={deleteTopic} editTopic={handleClickOpen} user={user}/>
+    <Dialog open={open} onClose={handleClose}>
+      <DialogTitle>Edit topic</DialogTitle>
+      <DialogContent>
+        <TextField 
+          autoFocus
+          id='topic'
+          type='text'
+          value={editedTopicName}
+          onChange={(e) => setEditedTopicName(e.target.value)}
+        />
+        <Button onClick={editTopic}>Edit</Button>
+      </DialogContent>
+    </Dialog>
+  </div>
 
   )
 }

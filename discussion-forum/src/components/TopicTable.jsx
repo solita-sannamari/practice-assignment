@@ -29,7 +29,7 @@ const TopicTable = (props) => {
           </TableHead>
           <TableBody>
             {topics.map((t) => (
-              <TopicRow key={t.topic.id} topic={t.topic} count={t.msgCount} latestMsgTime={t.latestMsgTime} deleteTopic={props.deleteTopic}></TopicRow>
+              <TopicRow key={t.topic.id} topic={t.topic} count={t.msgCount} latestMsgTime={t.latestMsgTime} deleteTopic={props.deleteTopic} editTopic={props.editTopic} user={props.user}></TopicRow>
             ))}
           </TableBody>
         </Table>

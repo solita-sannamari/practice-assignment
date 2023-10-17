@@ -9,6 +9,7 @@ const TopicRow = (props) => {
     const topic = props.topic
     const count = props.count
     const timestamp = props.latestMsgTime
+    const username = props.user.username
 
     return (
         <TableRow key={topic.id}>
@@ -27,6 +28,10 @@ const TopicRow = (props) => {
                   >
                       Delete
                   </Button>
+                  {username === topic.user.username && count == 0 ? 
+                    <Button variant="outlined" onClick={() => props.editTopic({ target: { id: topic.id } })} id={topic.id}>Edit</Button> 
+                    : <></> }
+                  
                 </TableCell>
               </TableRow>
     )

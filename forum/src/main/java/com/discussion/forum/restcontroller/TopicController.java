@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
@@ -41,4 +42,10 @@ public class TopicController {
         topicRepository.deleteById(id);
     }
 
+    @PutMapping("topics/{id}")
+    Topic updateTopic(@PathVariable int id, @RequestBody Topic topic) {
+        Topic updateTopic = topicRepository.getReferenceById(id);
+        updateTopic.setName(topic.getName());
+        return topicRepository.save(updateTopic);
     }
+}
