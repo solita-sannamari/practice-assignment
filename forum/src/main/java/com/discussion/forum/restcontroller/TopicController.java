@@ -20,8 +20,8 @@ public class TopicController {
     TopicRepository topicRepository;
 
     @GetMapping("/topics")
-    List<Topic> all() {
-        return topicRepository.findAll();
+    List<TopicStatistics> all() {
+        return topicRepository.getTopics();
     }
 
     @GetMapping("/topics/{id}")

@@ -15,7 +15,7 @@ import userService from '../services/users'
 
 function Forum() {
   const [topics, setTopics] = useState([])
-  const [topic, setTopic] = useState('')
+  const [topicName, setTopicName] = useState('')
   const [alert, setAlert] = useState(false)
   const [alertMessage, setAlertMessage] = useState('')
   const [alertSeverity, setAlertSeverity] = useState('')
@@ -46,25 +46,32 @@ function Forum() {
   const addTopic = (event) => {
     event.preventDefault()
 
-    if (topic != ''){
-      const result = topics.find(({name}) => name === topic)
-      if (result && result.name === topic) {
+    if (topicName != ''){
+      const result = topics.find((t) => t.topic.name === topicName)
+      if (result && result.topic.name === topicName) {
         setAlert(true)
         setAlertMessage('Topic is already added')
         setAlertSeverity('error')
-        setTopic('')
+        setTopicName('')
       } else {
+        console.log(topicName)
         const topicObject = {
-          name: topic,
-          user: user
+            name: topicName,
+            user: user
         }
         topicService
           .add(topicObject)
           .then(returnedTopic => {
-            setTopics(topics.concat(returnedTopic))
-            setTopic('')
+            console.log(returnedTopic)
+            const newTopicStatisticsObject = {
+              latestMsgTime: null,
+              msgCount: 0,
+              topic: returnedTopic
+            }
+            setTopics([newTopicStatisticsObject].concat(topics))
+            setTopicName('')
             setAlert(true)
-            setAlertMessage(`Added a new topic "${topic}"`)
+            setAlertMessage(`Added a new topic "${topicName}"`)
             setAlertSeverity('success')
           }) 
         } 
@@ -86,7 +93,7 @@ function Forum() {
     topicService
       .del(id)
       .then(() => {
-        setTopics((topics) => topics.filter((topic) => topic.id !== id));
+        setTopics((topics) => topics.filter((t) => t.topic.id !== id));
       })
       .catch((error) => {
         console.error("Error deleting topic:", error);
@@ -106,8 +113,8 @@ function Forum() {
            variant="outlined"
            size="small"
            fullWidth
-           value={topic}
-           onChange={(event) => { setTopic(event.target.value) } } />
+           value={topicName}
+           onChange={(event) => { setTopicName(event.target.value) } } />
        </Grid>
        <Grid item alignItems='stretch' style={{ display: 'flex' }}>
          <Button

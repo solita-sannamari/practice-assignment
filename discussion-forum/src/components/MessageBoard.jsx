@@ -119,7 +119,7 @@ const MessageBoard = () => {
                 ) : ( 
                     messages.map((message, index) => (
                         <div key={message.id}>
-                            <Grid item marginBottom={2}>Posted by: {message.user.username}, {message.timestamp[2]}.{message.timestamp[1]}.{message.timestamp[0]} at {message.timestamp[3]}:{message.timestamp[4]} </Grid>
+                            <Grid item marginBottom={2}>Posted by: {message.user.username}, {message.timestamp[2]}.{message.timestamp[1]}.{message.timestamp[0]} at {message.timestamp[3]}:{message.timestamp[4] < 10 ? `0${message.timestamp[4]}` : message.timestamp[4]} </Grid>
                             <Grid item marginBottom={2}>{message.message}</Grid>
                             <Grid item marginBottom={2}>
                             {message.user.username === user.username ? (

@@ -5,25 +5,10 @@ import TableRow from '@mui/material/TableRow'
 import Button from '@mui/material/Button'
 import { Link } from 'react-router-dom'
 
-import messageService from '../services/messages'
-
 const TopicRow = (props) => {
-    const [count, setCount] = useState(0)
     const topic = props.topic
-
-    const messageCount = (topicId) => {
-      
-      messageService
-      .getCount(topicId)
-      .then(msgCount => {
-        setCount(msgCount)
-      })
-    }
-    
-    useEffect(() => {
-      messageCount(topic.id)
-
-    }, [])
+    const count = props.count
+    const timestamp = props.latestMsgTime
 
     return (
         <TableRow key={topic.id}>
@@ -33,7 +18,7 @@ const TopicRow = (props) => {
                   </Link>
                   </TableCell>
                 <TableCell>{count}</TableCell>
-                <TableCell></TableCell>
+                <TableCell>{Array.isArray(timestamp) ? `${timestamp[2]}.${timestamp[1]}.${timestamp[0]} at ${timestamp[3]}:${timestamp[4] < 10 ? `0${timestamp[4]}` : timestamp[4]}` : "No messages"}</TableCell>
                 <TableCell>
                   <Button 
                     variant='outlined'
