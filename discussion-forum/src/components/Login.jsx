@@ -43,35 +43,37 @@ function Login() {
   return (
     <div className='login'>
       <h1>Login</h1>
-      <Grid container direction='column' spacing={2}>
+      <Grid container spacing={2} width='100%' alignItems='stretch'>
         <Grid item style={{height: alert ? 'auto' : '63.9583px'}} >
           {alert ? <Alert severity='error'>Username not found</Alert> : <></> }
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12}>
           <TextField 
               id='username'
               label='Username'
               type='text'
               size='small'
+              fullWidth
               value={username}
               onChange={(event) => setUsername(event.target.value)} 
           />
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12}>
           <TextField 
               id='password'
               label='Password'
               type='password'
               size='small'
+              fullWidth
               value={password}
               onChange={(event) => setPassword(event.target.value)}
           />
         </Grid>
-        <Grid item xs={12} md={8}>
+        <Grid item xs={12}>
           <Button 
             className='loginBtn'
+            fullWidth={true}
             variant='contained'
-            fullWidth
             onClick={handleLogin}
             >LOG IN
           </Button>

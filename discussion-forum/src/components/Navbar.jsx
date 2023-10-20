@@ -2,7 +2,7 @@ import { AppBar, Toolbar, Typography, Box, Button } from "@mui/material"
 import PetsIcon from '@mui/icons-material/Pets';
 import { Link, useNavigate } from "react-router-dom";
 
-const Navbar = () => {
+const Navbar = (props) => {
     const nav = useNavigate()
 
     const logout = () => {
@@ -15,7 +15,7 @@ const Navbar = () => {
                 <Toolbar>
                     <PetsIcon />
                     <Typography variant='h6'component='div' sx={{ flexGrow: 1 }}>
-                        Topics
+                        {props.heading}
                     </Typography>
                     <Button color='inherit' onClick={logout}>Logout</Button>
                 </Toolbar>

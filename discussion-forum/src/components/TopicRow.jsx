@@ -4,8 +4,10 @@ import TableCell from '@mui/material/TableCell'
 import TableRow from '@mui/material/TableRow'
 import Button from '@mui/material/Button'
 import { Link } from 'react-router-dom'
+import { Dialog, DialogTitle } from "@mui/material"
 
 const TopicRow = (props) => {
+    const [open, setOpen] = useState(false)
     const topic = props.topic
     const count = props.count
     const timestamp = props.latestMsgTime
@@ -25,14 +27,15 @@ const TopicRow = (props) => {
                     variant='outlined'
                     onClick={() => props.deleteTopic({ target: { id: topic.id } })}
                     id={topic.id}
-                  >
+                    >
                       Delete
                   </Button>
+                  </TableCell>
+                  <TableCell>
                   {username === topic.user.username && count == 0 ? 
                     <Button variant="outlined" onClick={() => props.editTopic({ target: { id: topic.id } })} id={topic.id}>Edit</Button> 
                     : <></> }
-                  
-                </TableCell>
+                    </TableCell>
               </TableRow>
     )
 }

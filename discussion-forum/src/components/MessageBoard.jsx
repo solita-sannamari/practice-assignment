@@ -14,6 +14,8 @@ import topicsService from '../services/topics'
 import userService from '../services/users'
 import Navbar from './Navbar'
 
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+
 const MessageBoard = () => {
     const [messages, setMessages] = useState([])
     const [message, setMessage] = useState('')
@@ -103,16 +105,14 @@ const MessageBoard = () => {
     }
 
     const handleClose = () => {
-        console.log('close dialog')
         setOpen(false)
         
     }
 
     return(
         <div>
-            <Navbar />
+            <Navbar heading={topic.name} />
             <p>Logged in as: {user.username}</p>
-            <h1>{topic.name}</h1>
             <Grid container marginBottom={2} direction='column' alignItems='flex-start'>
                 {messages.length === 0 ? (
                     <Grid item>No messages.</Grid>
@@ -123,8 +123,8 @@ const MessageBoard = () => {
                             <Grid item marginBottom={2}>{message.message}</Grid>
                             <Grid item marginBottom={2}>
                             {message.user.username === user.username ? (
-                                <Button id={message.id} variant='contained' onClick={handleClickOpen}>Edit</Button>
-                                ) : null}
+                                <Button id={message.id} variant='outlined' onClick={handleClickOpen}>Edit</Button>
+                                ) : <Button variant='contained'><ArrowDropUpIcon /></Button>}
                             </Grid>
                             {index !== messages.length - 1 && (
                                 <div style= {{borderBottom: '1px solid #e0e0e0'}}></div>
@@ -157,7 +157,7 @@ const MessageBoard = () => {
             </Grid>
             {alert ? <Alert severity='error'>{alertMessage}</Alert> : <></>}
 
-            <Dialog open={open} onClose={handleClose}>
+            <Dialog open={open} onClose={handleClose} disableRestoreFocus>
                 <DialogTitle>Edit message</DialogTitle>
                 <DialogContent>
                     <TextField
@@ -171,6 +171,7 @@ const MessageBoard = () => {
                     />
                 </DialogContent>
                 <DialogActions>
+                    <Button variant='outlined' onClick={() => setOpen(false)}>Cancel</Button>
                     <Button variant='contained' onClick={editMessage}>Send</Button>
                 </DialogActions>
             </Dialog>

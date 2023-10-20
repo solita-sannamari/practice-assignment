@@ -12,7 +12,7 @@ import Navbar from './Navbar'
 
 import topicService from '../services/topics'
 import userService from '../services/users'
-import { Dialog, DialogContent, DialogTitle } from '@mui/material'
+import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material'
 
 function Forum() {
   const [topics, setTopics] = useState([])
@@ -23,6 +23,9 @@ function Forum() {
   const [user, setUser] = useState({})
   const [editedTopicName, setEditedTopicName] = useState('')
   const [open, setOpen] = useState(false)
+  const [openAdd, setOpenAdd] = useState(false)
+  const [openDelete, setOpenDelete] = useState(false)
+  const [idToDelete, setIdToDelete] = useState(null)
   const [editTopicObj, setEditTopicObj] = useState({}) 
 
   const nav = useNavigate()
@@ -60,7 +63,7 @@ function Forum() {
       const result = topics.find((t) => t.topic.name === topicName)
       if (result && result.topic.name === topicName) {
         setAlert(true)
-        setAlertMessage('Topic is already added')
+        setAlertMessage(`Topic name "${topicName}" is already added`)
         setAlertSeverity('error')
         setTopicName('')
       } else {
@@ -94,10 +97,12 @@ function Forum() {
         setAlertSeverity('')
         setAlert(false)
       }, 3000)
+      setOpenAdd(false)
+
   }
 
-  const deleteTopic = (event) => {
-    const id = event.target.id;
+  const deleteTopic = (id) => {
+    setOpenDelete(false)
     topicService
       .del(id)
       .then(() => {
@@ -106,6 +111,11 @@ function Forum() {
       .catch((error) => {
         console.error("Error deleting topic:", error)
       })
+  }
+
+  const openDeleteDialog = (event) => {
+    setIdToDelete(event.target.id)
+    setOpenDelete(true)
   }
 
   const editTopic = (event) => {
@@ -142,33 +152,49 @@ function Forum() {
 
  return (
   <div>
-    <Navbar />
-     <p>Logged in as: {user.username}</p>
-     {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
-     <Grid container spacing={1} marginBottom={3} marginTop={2}>
-       <Grid item xs={4}>
-         <TextField
-           id="new-topic"
-           label='Topic'
+    <Navbar heading={'Topics'} />
+    <p>Logged in as: {user.username}</p>
+    {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
+    <Grid container spacing={1} marginBottom={3} marginTop={2}>
+       <Grid item alignItems='stretch' style={{ display: 'flex' }}>
+         <Button
+           type='submit'
+           variant='contained'
+           onClick={() => setOpenAdd(true)}
+         >
+           Add topic
+         </Button>
+       </Grid>
+    </Grid>
+
+    <Dialog open={openAdd} onClose={() => setOpenAdd(false)} disableRestoreFocus>
+      <DialogTitle>Add topic</DialogTitle>
+      <DialogContent>
+        <TextField 
+          autoFocus
+          id="new-topic"
            variant="outlined"
            size="small"
            fullWidth
            value={topicName}
-           onChange={(event) => { setTopicName(event.target.value) } } />
-       </Grid>
-       <Grid item alignItems='stretch' style={{ display: 'flex' }}>
-         <Button
+           onChange={(event) => { setTopicName(event.target.value) } }
+        />
+        
+      </DialogContent>
+      <DialogActions>
+      <Button
            type='submit'
            variant='contained'
            onClick={addTopic}
          >
            Add topic
          </Button>
-       </Grid>
-     </Grid>
+      </DialogActions>
+    </Dialog>
 
-     <TopicTable topics={topics} deleteTopic={deleteTopic} editTopic={handleClickOpen} user={user}/>
-    <Dialog open={open} onClose={handleClose}>
+    <TopicTable topics={topics} deleteTopic={openDeleteDialog} editTopic={handleClickOpen} user={user}/>
+
+    <Dialog open={open} onClose={handleClose} disableRestoreFocus>
       <DialogTitle>Edit topic</DialogTitle>
       <DialogContent>
         <TextField 
@@ -178,8 +204,20 @@ function Forum() {
           value={editedTopicName}
           onChange={(e) => setEditedTopicName(e.target.value)}
         />
-        <Button onClick={editTopic}>Edit</Button>
       </DialogContent>
+      <DialogActions>
+        <Button variant='contained' onClick={editTopic}>Edit</Button>
+        <Button variant='outlined' onClick={() => setOpen(false)}>Cancel</Button>
+      </DialogActions>
+    </Dialog>
+
+    <Dialog open={openDelete} onClose={() => setOpenDelete(false)}>
+      <DialogTitle>Delete</DialogTitle>
+      <DialogContent>Are you sure you want to delete this topic?</DialogContent>
+      <DialogActions>
+        <Button variant='outlined' onClick={() => setOpenDelete(false)}>Cancel</Button>
+        <Button variant='contained' onClick={() => deleteTopic(idToDelete)}>Delete</Button>
+      </DialogActions>
     </Dialog>
   </div>
 

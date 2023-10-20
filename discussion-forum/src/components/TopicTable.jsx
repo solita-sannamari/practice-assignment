@@ -25,6 +25,7 @@ const TopicTable = (props) => {
               <TableCell sx={{fontWeight: 'bold'}}>Messages</TableCell>
               <TableCell sx={{fontWeight: 'bold'}}>Time of last message</TableCell>
               <TableCell></TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
