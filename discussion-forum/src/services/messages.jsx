@@ -22,4 +22,9 @@ const getCount = (topicId) => {
     return request.then(response => response.data)
 }
 
-export default { getAll, add, edit, getCount }
+const newUpvote = (newObject) => {
+    const request = axios.post(`/api/upvotes`, newObject)
+    return request.then(response => response.data)
+}
+
+export default { getAll, add, edit, getCount, newUpvote }

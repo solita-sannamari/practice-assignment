@@ -68,8 +68,12 @@ const MessageBoard = () => {
             }
             messageService
                 .add(newMessage, id)
-                .then(returnedMessages => {
-                    setMessages(messages.concat(returnedMessages))
+                .then(returnedMessage => {
+                    const newMessageStatistic = {
+                        upvoteCount: 0,
+                        message: returnedMessage
+                    }
+                    setMessages(messages.concat(newMessageStatistic))
                     setMessage('')
                 })
         } else {
@@ -87,12 +91,16 @@ const MessageBoard = () => {
         event.preventDefault()
         
         const editedMsgObj = {...editMsgObj, message: editedMessage}
-        const topic_id = editedMsgObj.topic.id
-        const msg_id = editedMsgObj.id
+        const topicId = editedMsgObj.topic.id
+        const msgId = editedMsgObj.id
         messageService
-            .edit(editedMsgObj, topic_id, msg_id)
+            .edit(editedMsgObj, topicId, msgId)
             .then(returnedMessage => {
-                setMessages(messages.map(message => message.id != msg_id ? message : returnedMessage))
+                console.log(returnedMessage)
+                let returnedMessageStatistic = messages.find((m) => m.message.id == msgId)
+                returnedMessageStatistic.message = returnedMessage
+
+                setMessages(messages.map((m) => m.message.id != msgId ? m : returnedMessageStatistic))
             })
         
         setOpen(false)
@@ -100,13 +108,31 @@ const MessageBoard = () => {
     }
 
     const handleClickOpen = (event) => {
-        setEditMsgObj(messages.find((message) => message.id == event.target.id))
+        setEditMsgObj(messages.find((m) => m.message.id == event.currentTarget.dataset.msgid).message)
         setOpen(true)
     }
 
     const handleClose = () => {
-        setOpen(false)
-        
+        setOpen(false)   
+    }
+
+    const upvote = (event) => {
+        const msgId = event.currentTarget.dataset.msgid
+        const message = messages.find(m => m.message.id == msgId).message
+
+        const upvoteObj = {
+            message: message,
+            user: user
+        }
+
+        messageService
+            .newUpvote(upvoteObj, id)
+            .then(() => {
+                const updatedMessageStatistic = messages.find((m) => m.message.id == msgId)
+                updatedMessageStatistic.upvoteCount+=1
+                updatedMessageStatistic.isLiked = true
+                setMessages(messages.map((m) => m.message.id != msgId ? m : updatedMessageStatistic))
+            })
     }
 
     return(
@@ -117,14 +143,56 @@ const MessageBoard = () => {
                 {messages.length === 0 ? (
                     <Grid item>No messages.</Grid>
                 ) : ( 
-                    messages.map((message, index) => (
-                        <div key={message.id}>
-                            <Grid item marginBottom={2}>Posted by: {message.user.username}, {message.timestamp[2]}.{message.timestamp[1]}.{message.timestamp[0]} at {message.timestamp[3]}:{message.timestamp[4] < 10 ? `0${message.timestamp[4]}` : message.timestamp[4]} </Grid>
-                            <Grid item marginBottom={2}>{message.message}</Grid>
+                    messages.map((m, index) => (
+                        <div key={m.message.id}>
                             <Grid item marginBottom={2}>
-                            {message.user.username === user.username ? (
-                                <Button id={message.id} variant='outlined' onClick={handleClickOpen}>Edit</Button>
-                                ) : <Button variant='contained'><ArrowDropUpIcon /></Button>}
+                                Posted by: {m.message.user.username}, 
+                                {m.message.timestamp[2]}.{m.message.timestamp[1]}.{m.message.timestamp[0]} 
+                                at {m.message.timestamp[3]}:{m.message.timestamp[4] < 10 ? `0${m.message.timestamp[4]}` : m.message.timestamp[4]} </Grid>
+                            <Grid item marginBottom={2}>{m.message.message}</Grid>
+                            <Grid item marginBottom={2}>
+                            {(m.message.user.username === user.username) ? (
+                                <div style={{ display: 'flex', gap: '10px' }}>
+                                    <Button 
+                                        data-msgid={m.message.id} 
+                                        variant='outlined' 
+                                        onClick={handleClickOpen}
+                                    >
+                                        Edit
+                                    </Button>
+                                    <Button 
+                                        data-msgid={m.message.id} 
+                                        variant='outlined' 
+                                        disabled
+                                        style={{ 
+                                            display: 'flex', 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
+                                            color: '#333' 
+                                        }}
+                                    >
+                                        <ArrowDropUpIcon />
+                                        <span>{m.upvoteCount}</span>
+                                    </Button>
+                                </div>
+                                ) : <Button 
+                                        data-msgid={m.message.id} 
+                                        variant='contained' 
+                                        onClick={upvote}
+                                        disabled={m.isLiked}
+                                        style={{ 
+                                            display: 'flex', 
+                                            flexDirection: 'column', 
+                                            alignItems: 'center', 
+                                            color: m.isLiked ? '#333' : '#ffffff',
+                                            backgroundColor: m.isLiked ?  '#ffffff' : 1,
+                                            boxShadow: m.isLiked ? 'inset 0 0 0 0.7px rgba(0, 0, 0, 0.12)' : 'none'
+                                        }}
+                                    >
+                                        <ArrowDropUpIcon />
+                                        <span>{m.upvoteCount}</span>
+                                    </Button>
+                            }
                             </Grid>
                             {index !== messages.length - 1 && (
                                 <div style= {{borderBottom: '1px solid #e0e0e0'}}></div>
