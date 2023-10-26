@@ -147,7 +147,7 @@ const MessageBoard = () => {
                         <div key={m.message.id}>
                             <Grid item marginBottom={2}>
                                 Posted by: {m.message.user.username}, 
-                                {m.message.timestamp[2]}.{m.message.timestamp[1]}.{m.message.timestamp[0]} 
+                                {' ' + m.message.timestamp[2]}.{m.message.timestamp[1]}.{m.message.timestamp[0] + ' '} 
                                 at {m.message.timestamp[3]}:{m.message.timestamp[4] < 10 ? `0${m.message.timestamp[4]}` : m.message.timestamp[4]} </Grid>
                             <Grid item marginBottom={2}>{m.message.message}</Grid>
                             <Grid item marginBottom={2}>
