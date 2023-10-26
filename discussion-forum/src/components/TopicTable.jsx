@@ -1,8 +1,3 @@
-import {
-  BrowserRouter as Router,
-  Routes, Route, Link
-} from 'react-router-dom'
-
 import Table from '@mui/material/Table'
 import TableBody from '@mui/material/TableBody'
 import TableCell from '@mui/material/TableCell'
@@ -30,7 +25,16 @@ const TopicTable = (props) => {
           </TableHead>
           <TableBody>
             {topics.map((t) => (
-              <TopicRow key={t.topic.id} topic={t.topic} count={t.msgCount} latestMsgTime={t.latestMsgTime} deleteTopic={props.deleteTopic} editTopic={props.editTopic} user={props.user}></TopicRow>
+              <TopicRow 
+                key={t.topic.id} 
+                topic={t.topic} 
+                count={t.msgCount} 
+                latestMsgTime={t.latestMsgTime} 
+                deleteTopic={props.deleteTopic} 
+                editTopic={props.editTopic} 
+                user={props.user}
+              >
+              </TopicRow>
             ))}
           </TableBody>
         </Table>

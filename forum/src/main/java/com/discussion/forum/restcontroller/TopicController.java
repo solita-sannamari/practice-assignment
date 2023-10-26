@@ -1,10 +1,15 @@
 package com.discussion.forum.restcontroller;
 
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,33 +24,64 @@ public class TopicController {
 
     @Autowired
     TopicRepository topicRepository;
-
+    
     @GetMapping("/topics")
     List<TopicStatistics> all() {
         return topicRepository.getTopics();
     }
-
+    
     @GetMapping("/topics/{id}")
     Optional<Topic> getById(@PathVariable int id) {
         return topicRepository.findById(id);
     }
-
+    
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/topics")
     Topic createNew(@RequestBody Topic newTopic) {
         return topicRepository.save(newTopic);
     }
-
-    @ResponseStatus(HttpStatus.NO_CONTENT)
+    
     @DeleteMapping("/topics/{id}")
-    public void deleteById(@PathVariable int id) {
-        topicRepository.deleteById(id);
-    }
+    public ResponseEntity<Void> deleteById(@PathVariable int id) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails)principal).getUsername();
 
+        Collection<? extends GrantedAuthority> authorities = ((UserDetails)principal).getAuthorities();
+        String authority = new String();
+        for (GrantedAuthority a : authorities) {
+            authority = a.getAuthority();
+        }
+
+        Topic topic = topicRepository.getReferenceById(id);
+
+        if(topic.getUser().getUsername().equals(username) || authority.equals("admin")) {
+            topicRepository.deleteById(id);
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+    }
+    
     @PutMapping("topics/{id}")
-    Topic updateTopic(@PathVariable int id, @RequestBody Topic topic) {
-        Topic updateTopic = topicRepository.getReferenceById(id);
-        updateTopic.setName(topic.getName());
-        return topicRepository.save(updateTopic);
+    public ResponseEntity<Topic> updateTopic(@PathVariable int id, @RequestBody Topic topic) {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails)principal).getUsername();
+
+        Collection<? extends GrantedAuthority> authorities = ((UserDetails)principal).getAuthorities();
+        String authority = new String();
+        for (GrantedAuthority a : authorities) {
+            authority = a.getAuthority();
+        }
+
+        if (topic.getUser().getUsername().equals(username) || authority.equals("admin")) {
+            System.out.println("User authorized to modify topic");
+            Topic updateTopic = topicRepository.getReferenceById(id);
+            updateTopic.setName(topic.getName());
+            return ResponseEntity.ok(topicRepository.save(updateTopic));
+        } else {
+            System.out.println("User not authorized to modify topic");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
     }
 }

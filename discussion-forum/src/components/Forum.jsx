@@ -167,6 +167,8 @@ function Forum() {
        </Grid>
     </Grid>
 
+    <TopicTable topics={topics} deleteTopic={openDeleteDialog} editTopic={handleClickOpen} user={user}/>
+
     <Dialog open={openAdd} onClose={() => setOpenAdd(false)} disableRestoreFocus>
       <DialogTitle>Add topic</DialogTitle>
       <DialogContent>
@@ -179,7 +181,6 @@ function Forum() {
            value={topicName}
            onChange={(event) => { setTopicName(event.target.value) } }
         />
-        
       </DialogContent>
       <DialogActions>
       <Button
@@ -191,8 +192,6 @@ function Forum() {
          </Button>
       </DialogActions>
     </Dialog>
-
-    <TopicTable topics={topics} deleteTopic={openDeleteDialog} editTopic={handleClickOpen} user={user}/>
 
     <Dialog open={open} onClose={handleClose} disableRestoreFocus>
       <DialogTitle>Edit topic</DialogTitle>
