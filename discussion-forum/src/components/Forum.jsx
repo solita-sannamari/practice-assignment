@@ -38,14 +38,22 @@ function Forum() {
       nav('/login')
     } else {
       topicService
-        .getAll()
-        .then(initialTopics => {
-          setTopics(initialTopics)
-        })
+      .getAll()
+      .then(initialTopics => {
+        setTopics(initialTopics)
+      })
+      .catch((error) => {
+        console.log(error.message)
+        nav('/login')
+      })
       userService
         .getByUsername(parsedUser)
         .then(returnedUser => {
           setUser(returnedUser)
+        })
+        .catch((error) => {
+          console.log(error.message)
+          nav('/login')
         })
     }
   }, [])
@@ -152,8 +160,7 @@ function Forum() {
 
  return (
   <div>
-    <Navbar heading={'Topics'} />
-    <p>Logged in as: {user.username}</p>
+    <Navbar heading={'Topics'} username={user.username} />
     {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
     <Grid container spacing={1} marginBottom={3} marginTop={2}>
        <Grid item alignItems='stretch' style={{ display: 'flex' }}>

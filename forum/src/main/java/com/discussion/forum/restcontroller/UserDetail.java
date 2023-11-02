@@ -25,6 +25,8 @@ public class UserDetail implements UserDetailsService {
 
         Set<GrantedAuthority> authorities = Set.of(new SimpleGrantedAuthority(user.getRole()));
 
+        System.out.println("User login successful (User Detail)");
+
         return new org.springframework.security.core.userdetails.User(username, user.getPassword(), authorities);
     } 
 }

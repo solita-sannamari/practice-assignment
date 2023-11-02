@@ -7,7 +7,7 @@ import { Button,
         DialogActions,
         Alert } from '@mui/material'
 import { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 
 import messageService from '../services/messages'
 import topicsService from '../services/topics'
@@ -15,6 +15,7 @@ import userService from '../services/users'
 import Navbar from './Navbar'
 
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp';
+
 
 const MessageBoard = () => {
     const [messages, setMessages] = useState([])
@@ -28,12 +29,17 @@ const MessageBoard = () => {
     const [editedMessage, setEditedMessage] = useState('')
 
     const { id } = useParams()
+    const nav = useNavigate()
 
     useEffect(() => {
         messageService
             .getAll(id)
             .then(initialMessages => {
                 setMessages(initialMessages)
+            })
+            .catch((error) => {
+                console.log(error.message)
+                nav('/login')
             })
         topicsService
             .getById(id)
@@ -137,8 +143,8 @@ const MessageBoard = () => {
 
     return(
         <div>
-            <Navbar heading={topic.name} />
-            <p>Logged in as: {user.username}</p>
+            <Navbar heading={topic.name} username={user.username} />
+            <p></p>
             <Grid container marginBottom={2} direction='column' alignItems='flex-start'>
                 {messages.length === 0 ? (
                     <Grid item>No messages.</Grid>

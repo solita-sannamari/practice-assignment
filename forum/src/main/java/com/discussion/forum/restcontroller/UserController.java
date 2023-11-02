@@ -10,11 +10,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 
 @RestController
 public class UserController {
@@ -46,32 +50,17 @@ public class UserController {
         UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        System.out.println("User login successfull (User Controller)");
 
         return new ResponseEntity<>("User login successful", HttpStatus.OK);
     }
-}
 
-
-
-/*
-@RestController
-public class UserController {
-
-
-
-    @PostMapping("/login")
-    public ResponseEntity<User> getUsername(@RequestParam String username) {
-        System.out.println(' ');
-        System.out.println(' ');
-        System.out.println("Find username from userRepository (User)");
-        System.out.println(' ');
-        System.out.println(' ');
-        User user = userRepository.findByUsername(username);
-        if(user == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        } 
-        return new ResponseEntity<User>(user, HttpStatus.OK);
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        return ResponseEntity.ok("Logout successful");
     }
-    
 }
-*/
