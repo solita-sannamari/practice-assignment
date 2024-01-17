@@ -31,6 +31,7 @@ const TopicRow = (props) => {
             {username === topic.user.username || role === 'admin' ?
               <Button 
                 variant='outlined'
+                color='secondary'
                 onClick={() => props.deleteTopic({ target: { id: topic.id } })}
                 id={topic.id}
               >
@@ -42,7 +43,8 @@ const TopicRow = (props) => {
           <TableCell>
             {username === topic.user.username && count == 0 || role === 'admin' ? 
               <Button 
-                variant="outlined" 
+                variant='outlined'
+                color='secondary'
                 onClick={() => props.editTopic({ target: { id: topic.id } })} 
                 id={topic.id}
               >

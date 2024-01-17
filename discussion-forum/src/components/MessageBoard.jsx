@@ -161,20 +161,22 @@ const MessageBoard = () => {
                                 <div style={{ display: 'flex', gap: '10px' }}>
                                     <Button 
                                         data-msgid={m.message.id} 
-                                        variant='outlined' 
+                                        variant='outlined'
+                                        color='secondary'
                                         onClick={handleClickOpen}
                                     >
                                         Edit
                                     </Button>
                                     <Button 
                                         data-msgid={m.message.id} 
-                                        variant='outlined' 
+                                        variant='contained' 
                                         disabled
+                                        className='custom-disabled'
                                         style={{ 
                                             display: 'flex', 
                                             flexDirection: 'column', 
-                                            alignItems: 'center', 
-                                            color: '#333' 
+                                            alignItems: 'center',
+                                            color:'secondary',
                                         }}
                                     >
                                         <ArrowDropUpIcon />
@@ -182,7 +184,8 @@ const MessageBoard = () => {
                                     </Button>
                                 </div>
                                 ) : <Button 
-                                        data-msgid={m.message.id} 
+                                        data-msgid={m.message.id}
+                                        className={m.isLiked ? 'custom-disabled' : null } 
                                         variant='contained' 
                                         onClick={upvote}
                                         disabled={m.isLiked}
@@ -190,10 +193,8 @@ const MessageBoard = () => {
                                             display: 'flex', 
                                             flexDirection: 'column', 
                                             alignItems: 'center', 
-                                            color: m.isLiked ? '#333' : '#ffffff',
-                                            backgroundColor: m.isLiked ?  '#ffffff' : 1,
-                                            boxShadow: m.isLiked ? 'inset 0 0 0 0.7px rgba(0, 0, 0, 0.12)' : 'none'
-                                        }}
+                                            color: 'secondary',
+                                            }}
                                     >
                                         <ArrowDropUpIcon />
                                         <span>{m.upvoteCount}</span>

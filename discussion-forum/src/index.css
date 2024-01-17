@@ -44,6 +44,10 @@ h1 {
   justify-content: center;
 }
 
+.custom-disabled {
+  color: black !important;
+}
+
 
 @media (prefers-color-scheme: light) {
   :root {

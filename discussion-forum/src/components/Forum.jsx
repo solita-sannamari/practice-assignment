@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import '../App.css'
 
+import Image from 'mui-image'
+
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
 import Alert from '@mui/material/Alert'
@@ -162,6 +164,7 @@ function Forum() {
   <div>
     <Navbar heading={'Topics'} username={user.username} />
     {alert ? <Alert severity={alertSeverity}>{alertMessage}</Alert> : <></>}
+    <Image src="/cat.jpg" />
     <Grid container spacing={1} marginBottom={3} marginTop={2}>
        <Grid item alignItems='stretch' style={{ display: 'flex' }}>
          <Button
