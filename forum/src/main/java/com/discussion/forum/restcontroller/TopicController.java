@@ -31,10 +31,17 @@ public class TopicController {
     }
     
     @GetMapping("/topics/{id}")
-    Optional<Topic> getById(@PathVariable int id) {
-        return topicRepository.findById(id);
+    public ResponseEntity<Optional<Topic>> getById(@PathVariable int id) {
+        
+        Optional<Topic> topic = topicRepository.findById(id);
+        if (topic.isEmpty()) {
+            System.out.println("Topic id not found");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            return ResponseEntity.status(HttpStatus.OK).body(topic);
+        }
     }
-    
+          
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/topics")
     Topic createNew(@RequestBody Topic newTopic) {
@@ -45,21 +52,26 @@ public class TopicController {
     public ResponseEntity<Void> deleteById(@PathVariable int id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();
-
+        
         Collection<? extends GrantedAuthority> authorities = ((UserDetails)principal).getAuthorities();
         String authority = new String();
         for (GrantedAuthority a : authorities) {
             authority = a.getAuthority();
         }
+        
+        Optional<Topic> topic = topicRepository.findById(id);
 
-        Topic topic = topicRepository.getReferenceById(id);
-
-        if(topic.getUser().getUsername().equals(username) || authority.equals("admin")) {
-            topicRepository.deleteById(id);
-            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        if (topic.isPresent()) {
+            if(topic.get().getUser().getUsername().equals(username) || authority.equals("admin")) {
+                topicRepository.deleteById(id);
+                return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            }
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         }
+        
 
     }
     

@@ -38,8 +38,12 @@ const MessageBoard = () => {
                 setMessages(initialMessages)
             })
             .catch((error) => {
-                console.log(error.message)
-                nav('/login')
+                if (error.response.status == 404) {
+                    nav('*')
+                    console.log('page not found')
+                } else {
+                    nav('/login')
+                }
             })
         topicsService
             .getById(id)

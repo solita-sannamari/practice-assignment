@@ -1,6 +1,7 @@
 package com.discussion.forum.restcontroller;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Arrays;
 import java.util.ArrayList;
 
@@ -23,6 +24,9 @@ public class MessageController {
 
     @Autowired
     MessageRepository messageRepository;
+
+    @Autowired
+    TopicRepository topicRepository;
 
     @Autowired
     UserRepository userRepository;
@@ -57,68 +61,53 @@ public class MessageController {
     String replacement = "*";
 
     @GetMapping("/topics/{id}/messages")
-    List<MessageStatistics> findByTopicId(@PathVariable int id) {
+    public ResponseEntity<List<MessageStatistics>> findByTopicId(@PathVariable int id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
 
-        
         if (principal instanceof UserDetails) {
             username = ((UserDetails)principal).getUsername();
         } else {
             username = principal.toString();
         } 
-        List<MessageStatistics> messages = messageRepository.getMessagesByTopicId(id, userRepository.findByUsername(username).getId());
-        for (MessageStatistics message : messages) {
-            String maskedMessage = message.getMessage().getMessage();
-            
-            for (String bannedWord : bannedWords) {
-                maskedMessage = maskedMessage.replaceAll("(?i)\\b" + bannedWord + "\\b", replacement);
-            }
-            
-            message.getMessage().setMessage(maskedMessage);
 
-            /* 
-            String.join(" ", Arrays.asList(message.getMessage().getMessage().split(" ")).stream().map(s -> {
-                                                            if (Arrays.asList(bannedWords).contains(s)) {
-                                                                return replacement;
-                                                            } else {
-                                                                return s;
-                                                            }
-                                                        }).toList()); 
-            */
-
-            /* 
-            for (String bannedWord : bannedWords) {
-                ArrayList<String> maskedMessage = new ArrayList<String>();
-                for (String word : message.getMessage().getMessage().split("\\s+")) {
-                    System.out.println(word);
-                    // System.out.println(message.getMessage().getMessage());
-                    maskedMessage.add(StringUtils.replaceIgnoreCase(
-                                                            word, 
-                                                            bannedWord, 
-                                                            replacement
-                                                        ));
+        Optional<Topic> topic = topicRepository.findById(id);
+        if (topic.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            List<MessageStatistics> messages = messageRepository.getMessagesByTopicId(id, userRepository.findByUsername(username).getId());
+            for (MessageStatistics message : messages) {
+                String maskedMessage = message.getMessage().getMessage();
+                
+                for (String bannedWord : bannedWords) {
+                    maskedMessage = maskedMessage.replaceAll("(?i)\\b" + bannedWord + "\\b", replacement);
                 }
-                message.getMessage().setMessage(String.join(" ", maskedMessage));
-            } 
-            */
+                
+                message.getMessage().setMessage(maskedMessage);
+            }
+            return ResponseEntity.status(HttpStatus.OK).body(messages);
         }
-        return messages;
     }
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping("/topics/{id}/messages")
-    Message createNew(@RequestBody Message newMessage) {
-        messageRepository.save(newMessage);
-        String maskedMessage = newMessage.getMessage();
-            
-            for (String bannedWord : bannedWords) {
-                maskedMessage = maskedMessage.replaceAll("(?i)\\b" + bannedWord + "\\b", replacement);
-            }
-            
-        newMessage.setMessage(maskedMessage);
+    ResponseEntity<Object> createNew(@RequestBody Message newMessage, @PathVariable int id) {
 
-        return newMessage;
+        Optional<Topic> topic = topicRepository.findById(id);
+        if (topic.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } else {
+            messageRepository.save(newMessage);
+            String maskedMessage = newMessage.getMessage();
+                
+                for (String bannedWord : bannedWords) {
+                    maskedMessage = maskedMessage.replaceAll("(?i)\\b" + bannedWord + "\\b", replacement);
+                }
+                
+            newMessage.setMessage(maskedMessage);
+    
+            return ResponseEntity.status(HttpStatus.CREATED).body(newMessage);
+        }
     }
 
     @PutMapping("topics/{id}/messages/{msg_id}")
