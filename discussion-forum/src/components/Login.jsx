@@ -25,7 +25,7 @@ function Login() {
 
     axios({
       method: 'post',
-      url: 'http://localhost:5173/api/login',
+      url: '/api/login',
       data: formData,
       headers: { "Content-Type": "multipart/form-data" }
     }).then(response => {

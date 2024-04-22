@@ -23,9 +23,10 @@ const TopicRow = (props) => {
           </TableCell>
 
           <TableCell>
-            {Array.isArray(timestamp) 
-            ? `${timestamp[2]}.${timestamp[1]}.${timestamp[0]} at ${timestamp[3]}:${timestamp[4] < 10 ? `0${timestamp[4]}` : timestamp[4]}` 
-            : "No messages"}
+            {timestamp === null
+            ? "No messages" 
+            : `${timestamp.split('T')[0].split('-')[2]}.${timestamp.split('T')[0].split('-')[1]}.${timestamp.split('T')[0].split('-')[0]} 
+                  at ${timestamp.split('T')[1].substring(0,5)}` }
           </TableCell>
           <TableCell>
             {username === topic.user.username || role === 'admin' ?
