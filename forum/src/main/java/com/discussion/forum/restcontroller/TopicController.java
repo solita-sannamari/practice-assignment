@@ -25,12 +25,12 @@ public class TopicController {
     @Autowired
     TopicRepository topicRepository;
     
-    @GetMapping("/topics")
+    @GetMapping("/api/topics")
     List<TopicStatistics> all() {
         return topicRepository.getTopics();
     }
     
-    @GetMapping("/topics/{id}")
+    @GetMapping("/api/topics/{id}")
     public ResponseEntity<Optional<Topic>> getById(@PathVariable int id) {
         
         Optional<Topic> topic = topicRepository.findById(id);
@@ -43,12 +43,12 @@ public class TopicController {
     }
           
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/topics")
+    @PostMapping("/api/topics")
     Topic createNew(@RequestBody Topic newTopic) {
         return topicRepository.save(newTopic);
     }
     
-    @DeleteMapping("/topics/{id}")
+    @DeleteMapping("/api/topics/{id}")
     public ResponseEntity<Void> deleteById(@PathVariable int id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();
@@ -75,7 +75,7 @@ public class TopicController {
 
     }
     
-    @PutMapping("topics/{id}")
+    @PutMapping("/api/topics/{id}")
     public ResponseEntity<Topic> updateTopic(@PathVariable int id, @RequestBody Topic topic) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();

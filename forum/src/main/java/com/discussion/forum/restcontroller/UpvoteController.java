@@ -14,7 +14,7 @@ public class UpvoteController {
     UpvoteRepository upvoteRepository;
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/upvotes")
+    @PostMapping("/api/upvotes")
     Upvote createNew(@RequestBody Upvote newUpvote) {
         return upvoteRepository.save(newUpvote);
     }

@@ -29,22 +29,22 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
-    @GetMapping("/users/id/{id}")
+    @GetMapping("/api/users/id/{id}")
     Optional<User> findById(@PathVariable int id) {
         return userRepository.findById(id);
     }
 
-    @GetMapping("/users/username/{username}")
+    @GetMapping("/api/users/username/{username}")
     User findByUsername(@PathVariable String username) {
         return userRepository.findByUsername(username);
     }
 
-    @GetMapping("/users")
+    @GetMapping("/api/users")
     List<User> all() {
         return userRepository.findAll();
     }
 
-    @PostMapping("/login")
+    @PostMapping("/api/login")
     public ResponseEntity<String> authenticateUser(@RequestBody LoginDto loginDto) {
         Authentication authentication = authenticationManager.authenticate(new 
         UsernamePasswordAuthenticationToken(loginDto.getUsername(), loginDto.getPassword()));
@@ -55,7 +55,7 @@ public class UserController {
         return new ResponseEntity<>("User login successful", HttpStatus.OK);
     }
 
-    @PostMapping("/logout")
+    @PostMapping("/api/logout")
     public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth != null) {

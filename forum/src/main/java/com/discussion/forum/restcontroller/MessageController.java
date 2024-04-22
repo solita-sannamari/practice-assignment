@@ -2,10 +2,6 @@ package com.discussion.forum.restcontroller;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.Arrays;
-import java.util.ArrayList;
-
-import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,7 +56,7 @@ public class MessageController {
     };
     String replacement = "*";
 
-    @GetMapping("/topics/{id}/messages")
+    @GetMapping("/api/topics/{id}/messages")
     public ResponseEntity<List<MessageStatistics>> findByTopicId(@PathVariable int id) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username;
@@ -90,7 +86,7 @@ public class MessageController {
     }
 
     @ResponseStatus(HttpStatus.CREATED)
-    @PostMapping("/topics/{id}/messages")
+    @PostMapping("/api/topics/{id}/messages")
     ResponseEntity<Object> createNew(@RequestBody Message newMessage, @PathVariable int id) {
 
         Optional<Topic> topic = topicRepository.findById(id);
@@ -110,7 +106,7 @@ public class MessageController {
         }
     }
 
-    @PutMapping("topics/{id}/messages/{msg_id}")
+    @PutMapping("/api/topics/{id}/messages/{msg_id}")
     public ResponseEntity<Message> updateMessage(@PathVariable int id,@PathVariable int msg_id,@RequestBody Message message) {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails)principal).getUsername();

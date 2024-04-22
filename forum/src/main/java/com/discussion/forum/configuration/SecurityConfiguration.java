@@ -2,6 +2,7 @@ package com.discussion.forum.configuration;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -18,6 +19,9 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
+    @Value("${com.discussion.forum.baseUrl}")
+    private String baseUrl;
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -52,11 +56,14 @@ public class SecurityConfiguration {
            .authorizeHttpRequests((requests) ->
                 requests
                     .requestMatchers("/login").permitAll()
+                    .requestMatchers("/error").permitAll()
+                    .requestMatchers("/index.html").permitAll()
+                    .requestMatchers("/assets/*").permitAll()
                     .anyRequest().authenticated())
                     .formLogin(s -> s
-                        .loginPage("http://localhost:5173/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("http://localhost:5173/api/users", true)
+                        .loginPage("/login")
+                        .loginProcessingUrl("/api/login")
+                        .defaultSuccessUrl("/topics", true)
                         .permitAll()
                     )
             .logout(logout -> logout
